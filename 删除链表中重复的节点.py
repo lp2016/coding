@@ -5,7 +5,7 @@
 #         self.next = None
 # 需要考虑的问题有两个
 # 1.头节点也可能被删除：需要辅助节点指向头节点
-# 2.当两组重复节点相邻时如何处理：
+# 2.当两组重复节点相邻时如何处理：只有在fast指针不发生变化时，slow指针才向后移动
 class ListNode:
     def __init__(self, x):
         self.val = x
