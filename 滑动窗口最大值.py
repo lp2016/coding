@@ -1,50 +1,32 @@
-#
-# 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
-#
-#
-# @param num int整型一维数组
-# @param size int整型
-# @return int整型一维数组
-#
-# 思路：利用双端队列，存放可能成为滑动窗口最大值的下标。队列长度等于滑动窗口大小。
-# 滑动窗口进行滑动，滑到num[i]时：
-# 如果num[i]大于队尾元素，则队尾元素出队（说明队尾元素不可能成为接下来窗口内的最大值了）
-# 如果nums[i]小于队尾元素，则num[i]入队（nums[i]还可能成为接下来窗口内的最大值）
-# 滑动过程中，要先判断队列是不是满了，满了的话，队首元素要先出队
-# 队首元素一直是当前滑动窗口的最大值，直接输出就行
+# -*- coding:utf-8 -*-
+# 思路：利用双端队列，双端队列只存储可能成为窗口最大值的下标
+# 滑动到第i个元素，当第i个元素大于队尾元素时，队尾元素出队，因为队尾元素不可能再成为接下来窗口的最大值了
+# 当第i个元素小于队尾元素时，第i个元素入队
+# 同时需要不断监测窗口的大小，当窗口满时，需要将队首元素出队
 
 from collections import deque
 class Solution:
-    def maxInWindows(self , num, size):
-        if size >= len(num):
-            return [max(num)]
+    def maxInWindows(self, num, size):
+        if size == 0 or size > len(num):
+            return []
 
-        help = deque(num[0])
+        d = deque()
+        for i in range(size):
+            while len(d) > 0 and num[i] > num[d[-1]]:
+                d.pop()
+            d.append(i)
+
         res = []
-        window_size = 1
-        for i in range(0,size):
-            while len(help) > 0:
-                if num[i] >= help[-1]:
-                    help.pop()
-                else:
-                    break
-            help.append(i)
-
-        res.append(help[0])
 
         for i in range(size, len(num)):
-            if window_size >= size:
-                help.popleft()
+            res.append(num[d[0]])
+            while len(d) > 0 and num[i] > num[d[-1]]:
+                d.pop()
+            d.append(i)
+            while len(d) > 0 and d[0] + size == i:
+                d.popleft()
 
-            while len(help) > 0:
-                if num[i] > help[-1]:
-                    help.pop()
-                else:
-                    break
-
-            help.append(num[i])
-
-            res.append(help[0])
+        res.append(num[d[0]])
         return res
 
 if __name__ == '__main__':
